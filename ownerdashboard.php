@@ -468,7 +468,7 @@ $messagesResult = $messagesStmt->get_result();
                 <th>House Number</th>
                 <th>Amount Paid (KSH)</th>
                 <th>Payment Date</th>
-                <th>Payment Status</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -479,7 +479,7 @@ $messagesResult = $messagesStmt->get_result();
                     <td><?php echo htmlspecialchars($payment['house_number']); ?></td>
                     <td><?php echo number_format($payment['amount_paid'], 2); ?></td>
                     <td><?php echo htmlspecialchars(date("d-m-Y", strtotime($payment['payment_date']))); ?></td>
-                    <td><?php echo htmlspecialchars($payment['payment_status']); ?></td>
+                    
                 </tr>
             <?php } ?>
         </tbody>
