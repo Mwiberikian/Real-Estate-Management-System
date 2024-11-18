@@ -1,0 +1,99 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffe4e1; /* Light pink background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+    text-align: right;
+}
+
+
+/* Form container styling */
+form {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 400px;
+}
+
+/* Logo container styling */
+.logo img {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Fieldset styling */
+fieldset {
+    border: 1px solid #ffb6c1; /* Pink border */
+    border-radius: 5px;
+    padding: 15px;
+}
+
+/* Legend styling */
+legend {
+    font-weight: bold;
+    color: #ff69b4; /* Bright pink */
+}
+
+/* Input and select fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+select {
+    width: calc(100% - 10px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ffb6c1; /* Pink border */
+    border-radius: 5px;
+    background-color: #ffe4e1; /* Light pink background */
+    font-size: 14px;
+}
+
+/* Button styling */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #ff69b4; /* Bright pink */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff1493; /* Deep pink */
+}
+
+/* Checkbox and link styling */
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+a {
+    color: #ff69b4; /* Bright pink */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 500px) {
+    form {
+        width: 90%;
+    }
+}
