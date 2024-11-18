@@ -2,7 +2,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-include 'db_connect.php'; // Include your database connection
+include 'db_connect.php'; // Include your MySQLi connection file
 require 'vendor/autoload.php'; // Autoload PHPMailer
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -14,9 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     try {
-        // Check all user tables for the email
+        // Check if the email exists in the user tables
         $user = null;
-        $userType = null;
 
         $queries = [
             'tenants' => "SELECT email FROM tenants WHERE email = ?",
@@ -24,45 +23,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'helpline' => "SELECT email FROM helpline WHERE email = ?"
         ];
 
-        foreach ($queries as $type => $sql) {
+        foreach ($queries as $sql) {
             $stmt = $conn->prepare($sql);
             if (!$stmt) {
-                die("SQL error: " . $conn->error); // MySQLi error reporting
+                die("SQL error: " . $conn->error);
             }
-
             $stmt->bind_param('s', $email);
             $stmt->execute();
             $result = $stmt->get_result();
-
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
-                $userType = $type;
                 break;
             }
         }
 
         if ($user) {
-            // Generate a secure token and expiration time
-            $token = bin2hex(random_bytes(50));
-            $hashedToken = password_hash($token, PASSWORD_DEFAULT);
+            // Generate a random code
+            $resetCode = rand(100000, 999999); // 6-digit numeric code
+            $hashedCode = password_hash($resetCode, PASSWORD_DEFAULT);
             $expires = date("U") + 1800; // 30 minutes
 
-            // Remove any existing tokens for this email
+            // Delete existing reset requests
             $deleteStmt = $conn->prepare("DELETE FROM password_resets WHERE email = ?");
             $deleteStmt->bind_param('s', $email);
             $deleteStmt->execute();
 
-            // Insert the new token into the password_resets table
+            // Insert the new reset code into the password_resets table
             $insertStmt = $conn->prepare("
-                INSERT INTO password_resets (email, token, expires, user_type) 
-                VALUES (?, ?, ?, ?)
+                INSERT INTO password_resets (email, token, expires) 
+                VALUES (?, ?, ?)
             ");
-            $insertStmt->bind_param('ssis', $email, $hashedToken, $expires, $userType);
+            $insertStmt->bind_param('ssi', $email, $hashedCode, $expires);
             $insertStmt->execute();
 
-            // Send the reset email
-            $resetLink = "http://localhost/real-estate-management-system/reset_password.php?token=$token&email=" . urlencode($email) . "&user_type=$userType";
-
+            // Send the reset code to the user's email
             $mail = new PHPMailer(true);
             try {
                 $mail->isSMTP();
@@ -75,23 +69,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $mail->setFrom('noreply@example.com', 'Rosewood Park Residencies');
                 $mail->addAddress($email);
-                $mail->Subject = 'Password Reset Request';
+                $mail->Subject = 'Your Password Reset Code';
                 $mail->isHTML(true);
                 $mail->Body = "
                     <p>Hi,</p>
-                    <p>You requested a password reset. Click the link below to reset your password:</p>
-                    <p><a href='$resetLink'>$resetLink</a></p>
-                    <p>If you did not request this, you can safely ignore this email.</p>
-                    <p>Thanks,<br>Rosewood Park Team</p>
+                    <p>Your password reset code is:</p>
+                    <h2>$resetCode</h2>
+                    <p>Please visit the link below to reset your password:</p>
+                    <p><a href='http://localhost/Real-Estate-Management-System/reset_password.php'>Reset Password Page</a></p>
+                    <p>This code will expire in 30 minutes.</p>
+                    <p>Thanks,<br>Your Website Team</p>
                 ";
 
                 $mail->send();
-                echo "If your email is registered, you will receive a password reset link shortly.";
+                echo "If your email is registered, you will receive a reset code shortly.";
             } catch (Exception $e) {
                 echo "Error: Unable to send email. Please try again later.";
             }
         } else {
-            echo "If your email is registered, you will receive a password reset link shortly.";
+            echo "If your email is registered, you will receive a reset code shortly.";
         }
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
