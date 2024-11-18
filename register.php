@@ -1,5 +1,5 @@
 <?php
-include 'db_connect.php'; // Ensure this file connects to the database using MySQLi
+include 'db_connect.php'; 
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
