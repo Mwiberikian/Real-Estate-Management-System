@@ -1,15 +1,17 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif; /* Modern font */
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
+    background-color: #f5f0e6; /* Beige background */
+    color: #333;
 }
 
 h1 {
     text-align: center;
-    margin-top: 20px;
-    color: #333;
+    margin-top: 30px;
+    color: #5a5a5a;
+    font-size: 2.5rem;
 }
 
 /* Property Listings Container */
@@ -17,63 +19,77 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
-    padding: 20px;
+    gap: 30px;
+    padding: 30px;
     max-width: 1200px;
     margin: auto;
 }
 
 /* Property Card */
 .property-card {
-    width: 250px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 280px;
+    background-color: #e9dccb; /* Light tan card color */
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-align: center;
     text-decoration: none;
     color: inherit;
 }
 
 .property-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Property Image */
 .property-image-container {
     width: 100%;
-    height: 150px;
+    height: 180px;
     overflow: hidden;
+    border-bottom: 2px solid #d2c0aa; /* Darker beige for image divider */
 }
 
 .property-image-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.property-card:hover .property-image-container img {
+    transform: scale(1.1);
 }
 
 /* Property Details */
 .property-card h3 {
-    font-size: 20px;
-    color: #333;
-    margin: 15px 0 10px;
+    font-size: 1.5rem;
+    color: #4a4a4a;
+    margin: 15px 0 8px;
 }
 
 .property-card p {
-    font-size: 16px;
-    color: #666;
-    margin: 5px 0 15px;
+    font-size: 1rem;
+    color: #6a6a6a;
+    margin: 5px 0 20px;
+    line-height: 1.4;
+}
+
+/* Add a subtle border on hover */
+.property-card:hover {
+    border: 2px solid #c8b299; /* Muted beige for hover border */
 }
 
 /* Media Queries */
 @media (max-width: 768px) {
     .property-card {
         width: 100%;
+        margin: 0 10px;
     }
 
     .property-listings {
-        padding: 10px;
+        padding: 20px;
     }
 }

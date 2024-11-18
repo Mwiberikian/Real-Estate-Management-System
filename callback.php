@@ -2,7 +2,7 @@
 // Include database connection
 $servername = "localhost"; // Update with your database server
 $username = "root";        // Update with your database username
-$password = "";            // Update with your database password
+$password = "oliviamumbi2010";            // Update with your database password
 $dbname = "software";      // Update with your database name
 
 $conn = new mysqli($servername, $username, $password, $dbname);

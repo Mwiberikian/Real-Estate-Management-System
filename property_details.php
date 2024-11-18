@@ -1,6 +1,7 @@
 <?php
 include('db_connect.php');
 
+// Retrieve property details from the database
 $propertyId = $_GET['id'];
 $sql = "SELECT p.property_id, p.house_number, p.price_per_month, p.bedrooms, p.description, pi.image_path 
         FROM Properties p
@@ -23,7 +24,10 @@ $property = $result->fetch_assoc();
     <link rel="stylesheet" href="bookings.css">
 </head>
 <body>
-    <h1>Property Details</h1>
+    <header class="header">
+        <h1>Rosewood Park Estate</h1>
+        <p>Find your perfect home</p>
+    </header>
 
     <div class="property-details-container">
         <!-- Property Details Card -->
@@ -32,10 +36,10 @@ $property = $result->fetch_assoc();
                 <img src="<?php echo $property['image_path']; ?>" alt="Property Image" class="property-image">
             </div>
 
-            <h2><?php echo $property['house_number']; ?></h2>
-            <p><?php echo $property['bedrooms']; ?> Bedrooms</p>
-            <p>Price: KSh <?php echo number_format($property['price_per_month']); ?> / month</p>
-            <p>Description: <?php echo $property['description']; ?></p>
+            <h2>House: <?php echo $property['house_number']; ?></h2>
+            <p><strong>Bedrooms:</strong> <?php echo $property['bedrooms']; ?></p>
+            <p><strong>Price:</strong> KSh <?php echo number_format($property['price_per_month']); ?> / month</p>
+            <p><strong>Description:</strong> <?php echo $property['description']; ?></p>
         </div>
 
         <!-- Booking Form Card -->
@@ -45,21 +49,31 @@ $property = $result->fetch_assoc();
                 <input type="hidden" name="property_id" value="<?php echo $property['property_id']; ?>">
 
                 <label for="first_name">First Name</label>
-                <input type="text" name="first_name" id="first_name" required>
+                <input type="text" name="first_name" id="first_name" placeholder="Enter your first name" required>
 
                 <label for="last_name">Last Name</label>
-                <input type="text" name="last_name" id="last_name" required>
+                <input type="text" name="last_name" id="last_name" placeholder="Enter your last name" required>
 
                 <label for="email">Email</label>
-                <input type="email" name="email" id="email" required>
+                <input type="email" name="email" id="email" placeholder="Enter your email address" required>
 
                 <label for="phone_number">Phone Number</label>
-                <input type="tel" name="phone_number" id="phone_number" required>
+                <input type="tel" name="phone_number" id="phone_number" placeholder="Enter your phone number" required>
 
-                <input type="submit" value="Book Now" class="btn">
+                <button type="submit" class="btn"><span>Book Now</span></button>
             </form>
+
+            <!-- Contact Options -->
+            <div class="contact-options">
+                <p>Need to contact the owner?</p>
+                <a href="https://wa.me/+254700123456" class="btn whatsapp-btn" target="_blank"><span>Contact via WhatsApp</span></a>
+                <a href="tel:+254700123456" class="btn phone-btn"><span>Call the Owner</span></a>
+            </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Rosewood Park Estate. All rights reserved.</p>
+    </footer>
 </body>
 </html>
-

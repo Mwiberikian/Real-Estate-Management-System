@@ -3,7 +3,7 @@
 $host = 'localhost';
 $db = 'software';
 $user = 'root';
-$pass = ''; // Update with your database password
+$pass = 'oliviamumbi2010'; // Update with your database password
 $conn = new mysqli($host, $user, $pass, $db);
 
 // Check connection

@@ -1,71 +1,80 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
+    background-color:#fdfbe8;
+    color: #444;
 }
 
-h1 {
+h1, h3 {
+    font-family: 'Poppins', sans-serif;
+}
+
+header.header {
     text-align: center;
-    margin-top: 20px;
-    color: #333;
+    padding: 20px;
+    background-color:  #A58754;
+    color: #fff;
+}
+
+header.header h1 {
+    font-size: 36px;
+    margin: 0;
+}
+
+header.header p {
+    font-size: 18px;
+    margin: 5px 0 0;
 }
 
 .property-details-container {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding: 20px;
+    gap: 30px;
+    padding: 40px;
     max-width: 1200px;
     margin: auto;
+    flex-wrap: wrap;
 }
 
-/* Property Card */
-.property-details {
+/* Property Details Card */
+.property-details, .booking-form {
     width: 45%;
-    background-color: #fff;
+    background-color:#fff8dc;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
 }
 
 .property-image-container img {
     width: 100%;
-    border-radius: 8px;
+    border-radius: 12px;
     margin-bottom: 15px;
 }
 
 .property-details h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 10px;
+    font-size: 26px;
+    color: #004d40;
+    margin-bottom: 15px;
 }
 
 .property-details p {
     font-size: 18px;
-    color: #666;
+    color: #555;
     margin: 5px 0;
 }
 
-/* Booking Form Card */
-.booking-form {
-    width: 45%;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
+/* Booking Form */
 .booking-form h3 {
-    font-size: 22px;
-    color: #333;
-    margin-bottom: 15px;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #004d40;
 }
 
 .booking-form label {
     font-size: 16px;
-    color: #333;
+    color: #444;
     display: block;
     margin-bottom: 5px;
 }
@@ -74,38 +83,73 @@ h1 {
 .booking-form input[type="email"],
 .booking-form input[type="tel"] {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 16px;
 }
 
-.booking-form input[type="submit"] {
+.booking-form .btn {
     width: 100%;
-    padding: 12px;
-    background-color: #28a745;
+    padding: 14px;
+    background-color:  #A58754;;
     border: none;
     color: white;
     font-size: 18px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.booking-form input[type="submit"]:hover {
-    background-color: #218838;
+.booking-form .btn:hover {
+    background-color: burlywood;
 }
 
-/* Media Queries */
-@media (max-width: 768px) {
-    .property-details-container {
-        flex-direction: column;
-        padding: 10px;
-    }
+/* Contact Buttons */
+.contact-options {
+    margin-top: 20px;
+    text-align: center;
+}
+.btn{
+    background-color: #A58754;
+}
 
-    .property-details,
-    .booking-form {
-        width: 100%;
-    }
+.contact-btn {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 6px;
+    background-color: #A58754;
+}
+
+.whatsapp-btn {
+    background-color: #A58754;
+    color: white;
+}
+
+.whatsapp-btn:hover {
+    background-color: #A58754;
+}
+
+.phone-btn {
+    background-color: #A58754;
+    color: white;
+}
+
+.phone-btn:hover {
+    background-color: #A58754;
+}
+
+/* Footer */
+footer.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #A58754;
+    color: #fff;
+    font-size: 14px;
 }

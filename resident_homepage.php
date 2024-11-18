@@ -15,10 +15,10 @@ if (!isset($_SESSION['tenant_id'])) {
 }
 
 // Database connection
-$host = 'localhost';
+$host = 'localhost:3307';
 $db = 'software';
 $user = 'root';
-$pass = '';
+$pass = 'oliviamumbi2010';
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
