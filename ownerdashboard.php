@@ -1,8 +1,52 @@
 <?php
+session_start();
 include 'db_connect.php';
 
-// Assuming $userId represents the logged-in property owner’s ID
-$userId = 1; // Replace with the actual logged-in user ID
+// Check if the user is logged in
+if (!isset($_SESSION['owner_id'])) {
+    header("Location: login.php"); // Redirect to login page if not logged in
+    exit();
+}
+
+if (isset($_GET['logout'])) {
+    session_destroy(); // Destroy the session
+    header("Location: login.html"); // Redirect to the login page
+    exit();
+}
+
+$userId = $_SESSION['owner_id']; // Get owner ID from the session
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["updateTenant"])) {
+    $tenantId = intval($_POST["tenant_id"]);
+    $firstname = trim($_POST["firstname"]);
+    $lastname = trim($_POST["lastname"]);
+    $email = trim($_POST["email"]);
+    $phonenumber = trim($_POST["phonenumber"]);
+
+    $updateSql = "UPDATE tenants SET firstname = ?, lastname = ?, email = ?, phonenumber = ? WHERE tenant_id = ?";
+    $stmt = $conn->prepare($updateSql);
+    $stmt->bind_param("ssssi", $firstname, $lastname, $email, $phonenumber, $tenantId);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Tenant updated successfully.'); window.location.href='ownerdashboard.php';</script>";
+    } else {
+        echo "<script>alert('Failed to update tenant.');</script>";
+    }
+    $stmt->close();
+}
+if (isset($_GET['deleteTenantId'])) {
+    $tenantId = intval($_GET['deleteTenantId']);
+
+    $deleteSql = "DELETE FROM tenants WHERE tenant_id = ?";
+    $stmt = $conn->prepare($deleteSql);
+    $stmt->bind_param("i", $tenantId);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Tenant deleted successfully.'); window.location.href='ownerdashboard.php';</script>";
+    } else {
+        echo "<script>alert('Failed to delete tenant.');</script>";
+    }
+    $stmt->close();
+}
 
 // Handle form submission for adding properties
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["addProperty"])) {
@@ -22,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["addProperty"])) {
     foreach ($_FILES['propertyImages']['tmp_name'] as $key => $tmpName) {
         $imageName = basename($_FILES['propertyImages']['name'][$key]);
         $targetFilePath = $imageDirectory . $imageName;
-        
+
         // Check if file is an image
         if (getimagesize($tmpName)) {
             if (move_uploaded_file($tmpName, $targetFilePath)) {
@@ -79,6 +123,42 @@ $bookingsStmt->bind_param("i", $userId);
 $bookingsStmt->execute();
 $bookingsResult = $bookingsStmt->get_result();
 
+// Fetch payments related to the owner's properties
+$paymentsSql = "SELECT 
+                    pay.payment_id, 
+                    pay.amount_paid, 
+                    pay.payment_date, 
+                    pay.payment_status, 
+                    t.firstname AS tenant_firstname, 
+                    t.lastname AS tenant_lastname, 
+                    p.house_number 
+                FROM payments pay
+                JOIN tenants t ON pay.tenant_id = t.tenant_id
+                JOIN properties p ON t.property_id = p.property_id
+                WHERE p.owner_id = ?";
+$paymentsStmt = $conn->prepare($paymentsSql);
+$paymentsStmt->bind_param("i", $userId); // $userId is the owner_id from session
+$paymentsStmt->execute();
+$paymentsResult = $paymentsStmt->get_result();
+
+// Fetch maintenance requests relevant to the owner's properties
+$maintenanceSql = "SELECT 
+                       mr.id AS request_id, 
+                       mr.description AS request_description, 
+                       mr.created_at AS request_date, 
+                       t.firstname AS tenant_firstname, 
+                       t.lastname AS tenant_lastname, 
+                       p.house_number 
+                   FROM maintenance_requests mr
+                   JOIN tenants t ON mr.tenant_id = t.tenant_id
+                   JOIN properties p ON mr.property_id = p.property_id
+                   WHERE p.owner_id = ?";
+$maintenanceStmt = $conn->prepare($maintenanceSql);
+$maintenanceStmt->bind_param("i", $userId); // $userId is the owner_id from session
+$maintenanceStmt->execute();
+$maintenanceResult = $maintenanceStmt->get_result();
+
+
 // Fetch tenants, maintenance requests, payments, and messages
 $tenantsSql = "SELECT t.tenant_id, t.firstname, t.lastname, t.email, t.phonenumber
                 FROM tenants t
@@ -89,13 +169,12 @@ $tenantsStmt->bind_param("i", $userId);
 $tenantsStmt->execute();
 $tenantsResult = $tenantsStmt->get_result();
 
-$maintenanceSql = "SELECT mr.id, mr.description, mr.created_at, 
+$maintenanceSql = "SELECT mr.id, mr.description,mr.status, mr.created_at, 
                    t.firstname, t.lastname, p.house_number
                    FROM maintenance_requests mr
                    JOIN tenants t ON mr.tenant_id = t.tenant_id
                    JOIN properties p ON mr.property_id = p.property_id
                    WHERE p.owner_id = ?";
-
 $maintenanceStmt = $conn->prepare($maintenanceSql);
 $maintenanceStmt->bind_param("i", $userId);
 $maintenanceStmt->execute();
@@ -124,6 +203,7 @@ $messagesStmt->bind_param("i", $userId);
 $messagesStmt->execute();
 $messagesResult = $messagesStmt->get_result();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -289,8 +369,8 @@ $messagesResult = $messagesStmt->get_result();
         <li><a href="#" onclick="showSection('tenants')">Tenants Management</a></li>
         <li><a href="#" onclick="showSection('maintenance')">Maintenance Requests</a></li>
         <li><a href="#" onclick="showSection('payments')">Payment Tracking</a></li>
-        <li><a href="#" onclick="showSection('messages')">Messages/Notifications</a></li>
         <li><a href="#" onclick="showSection('bookings')">View Bookings</a></li>
+        <li><a href="?logout=true" style="color: red;">Logout</a></li>
     </ul>
 </nav>
 
@@ -317,6 +397,50 @@ $messagesResult = $messagesStmt->get_result();
     </form>
 </div>
 
+<!-- Tenants Management Section -->
+<div id="tenants" class="form-section">
+    <h3>Manage Tenants</h3>
+    <table border="1" style="width:100%; text-align:left;">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <div class="container text-center mt-5">
+        <!-- Button -->
+        <a href="register.html" class="btn btn-primary btn-lg">register new tenant</a>
+    </div>
+        <tbody>
+            <?php while ($tenant = $tenantsResult->fetch_assoc()) { ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($tenant['firstname']); ?></td>
+                    <td><?php echo htmlspecialchars($tenant['lastname']); ?></td>
+                    <td><?php echo htmlspecialchars($tenant['email']); ?></td>
+                    <td><?php echo htmlspecialchars($tenant['phonenumber']); ?></td>
+                    <td>
+                    <form method="post" style="display:inline;">
+    <input type="hidden" name="tenant_id" value="<?php echo $tenant['tenant_id']; ?>">
+    <input type="text" name="firstname" value="<?php echo htmlspecialchars($tenant['firstname']); ?>" required>
+    <input type="text" name="lastname" value="<?php echo htmlspecialchars($tenant['lastname']); ?>" required>
+    <input type="email" name="email" value="<?php echo htmlspecialchars($tenant['email']); ?>" required>
+    <input type="text" name="phonenumber" value="<?php echo htmlspecialchars($tenant['phonenumber']); ?>" required>
+    <input type="submit" name="updateTenant" value="Update" class="btn">
+</form>
+<a href="?deleteTenantId=<?php echo $tenant['tenant_id']; ?>" 
+   onclick="return confirm('Are you sure you want to delete this tenant?');" 
+   class="btn" style="background-color: #dc3545; color: white;">Delete</a>
+
+                    </td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+
 <!-- Bookings Section -->
 <div id="bookings" class="form-section">
     <h3>Your Property Bookings</h3>
@@ -334,6 +458,67 @@ $messagesResult = $messagesStmt->get_result();
         <?php } ?>
     </div>
 </div>
+<div id="payments" class="form-section">
+    <h3>Payment Tracking</h3>
+    <table border="1" style="width:100%; text-align:left; border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th>Payment ID</th>
+                <th>Tenant Name</th>
+                <th>House Number</th>
+                <th>Amount Paid (KSH)</th>
+                <th>Payment Date</th>
+                <th>Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($payment = $paymentsResult->fetch_assoc()) { ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($payment['payment_id']); ?></td>
+                    <td><?php echo htmlspecialchars($payment['firstname']) . ' ' . htmlspecialchars($payment['lastname']); ?></td>
+                    <td><?php echo htmlspecialchars($payment['house_number']); ?></td>
+                    <td><?php echo number_format($payment['amount_paid'], 2); ?></td>
+                    <td><?php echo htmlspecialchars(date("d-m-Y", strtotime($payment['payment_date']))); ?></td>
+                    <td><?php echo htmlspecialchars($payment['payment_status']); ?></td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+<div id="maintenance" class="form-section">
+    <h3>Maintenance Requests</h3>
+    <table border="1" style="width:100%; text-align:left; border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Tenant Name</th>
+                <th>House Number</th>
+                <th>Request Description</th>
+                <th>Request Date</th>
+                <th>status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if ($maintenanceResult->num_rows > 0) { ?>
+                <?php while ($request = $maintenanceResult->fetch_assoc()) { ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($request['id']); ?></td>
+                        <td><?php echo htmlspecialchars($request['firstname']) . ' ' . htmlspecialchars($request['lastname']); ?></td>
+                        <td><?php echo htmlspecialchars($request['house_number']); ?></td>
+                        <td><?php echo htmlspecialchars($request['description']); ?></td>
+                        <td><?php echo htmlspecialchars(date("d-m-Y", strtotime($request['created_at']))); ?></td>
+                        <td><?php echo htmlspecialchars($request['status']); ?></td>
+                    </tr>
+                <?php } ?>
+            <?php } else { ?>
+                <tr>
+                    <td colspan="5" style="text-align:center;">No maintenance requests found for your properties.</td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
+
 
 <script>
     function showSection(sectionId) {
