@@ -1,62 +1,67 @@
 <?php
-include 'db_connect.php'; // Include your MySQLi connection file
+include 'db_connect.php'; // Ensure this file connects to the database using MySQLi
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $resetCode = $_POST['resetCode'];
+    // Sanitize inputs
+    $firstname = htmlspecialchars(trim($_POST['firstName']));
+    $lastname = htmlspecialchars(trim($_POST['lastName']));
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirmPassword'];
+    $phonenumber = htmlspecialchars(trim($_POST['phone']));
+    $role = htmlspecialchars(trim($_POST['role']));
 
+    // Check if passwords match
     if ($password !== $confirmPassword) {
-        echo "Passwords do not match.";
-    } else {
-        // Check if the reset code and email are valid
-        $stmt = $conn->prepare("SELECT * FROM password_resets WHERE email = ? AND expires >= ?");
-        if (!$stmt) {
-            die("SQL error: " . $conn->error); // Debugging statement
-        }
-
-        $current_time = date("U");
-        $stmt->bind_param('si', $email, $current_time); // Bind parameters
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $hashedCode = $row['token'];
-
-            if (password_verify($resetCode, $hashedCode)) {
-                // Hash the new password and update it in the users table
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-                $updateStmt = $conn->prepare("
-                    UPDATE users 
-                    SET password = ? 
-                    WHERE email = ?
-                ");
-                if (!$updateStmt) {
-                    die("SQL error: " . $conn->error); // Debugging statement
-                }
-
-                $updateStmt->bind_param('ss', $hashedPassword, $email);
-                $updateStmt->execute();
-
-                // Delete the reset record
-                $deleteStmt = $conn->prepare("DELETE FROM password_resets WHERE email = ?");
-                if (!$deleteStmt) {
-                    die("SQL error: " . $conn->error); // Debugging statement
-                }
-
-                $deleteStmt->bind_param('s', $email);
-                $deleteStmt->execute();
-
-                echo "Password has been reset successfully!";
-            } else {
-                echo "Invalid reset code.";
-            }
-        } else {
-            echo "Invalid or expired reset code.";
-        }
+        echo "Passwords do not match!";
+        exit();
     }
-}
+
+    // Hash the password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    // SQL query based on role
+    if ($role === 'PropertyOwner') {
+        $sql = "INSERT INTO PropertyOwners (firstname, lastname, email, password, phonenumber) 
+                VALUES (?, ?, ?, ?, ?)";
+    } elseif ($role === 'Resident') {
+        $sql = "INSERT INTO Tenants (firstname, lastname, email, password, phonenumber) 
+                VALUES (?, ?, ?, ?, ?)";
+    } elseif ($role === 'Helpline') {
+        $sql = "INSERT INTO helpline (firstname, lastname, email, password, phonenumber) 
+                VALUES (?, ?, ?, ?, ?)";
+    } else {
+        echo "Invalid role selected.";
+        exit();
+    }
+
+    // Prepare the SQL statement
+    $stmt = $conn->prepare($sql);
+
+    if ($role === 'PropertyOwner') {
+        $stmt->bind_param("sssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber);
+    }
+    elseif ($role === 'Helpline') {
+        $stmt->bind_param("sssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber);
+    }
+    } elseif($role === 'Resident') {
+        $stmt->bind_param("sssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber);
+    }
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        // Redirect on success
+        header("Location: login.html");
+        exit();
+    } else {
+        // Handle execution errors
+        echo "Registration failed: " . $stmt->error;
+    }
+
+    // Close the statement and connection
+    $stmt->close();
+    $conn->close();
 ?>
