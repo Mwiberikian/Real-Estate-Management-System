@@ -14,7 +14,7 @@
 include 'db_connect.php';
 
 // Fetch maintenance requests from the database
-$sql = "SELECT id, description, status, property_number FROM maintenance_requests";
+$sql = "SELECT id, description, status, property_id FROM maintenance_requests";
 $result = $conn->query($sql); // Execute the query
 ?>
 
@@ -27,6 +27,7 @@ $result = $conn->query($sql); // Execute the query
         </div>
         <nav>
             <ul>
+                <li><a href="register.html">Register</a></li>
                 <li><a href="Helpline_tickets.php">Tickets</a></li>
                 <li><a href="announcements.php">Announcements</a></li>
                 <li><a href="#communication">Communication</a></li>
