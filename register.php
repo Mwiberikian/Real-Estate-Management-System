@@ -65,9 +65,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Close the statement and connection
     $stmt->close();
     $conn->close();
-<<<<<<< HEAD
 }
 ?>
-=======
-?>
->>>>>>> ff955c5b76e84fc2268110c6a117900962d1d167
