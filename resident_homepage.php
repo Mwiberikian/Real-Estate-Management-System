@@ -253,13 +253,13 @@ $conn->close();
             </div>
 
             <div id="profile-section" class="profile-section">
-                <h2>Welcome, Resident1!</h2>
-                <img src="SupportImages/download (3).jpeg" alt="Resident Photo" onerror="this.src='default-avatar.png';" class="profile-photo">
-                <p><strong>Name:</strong> Resident1</p>
-                <p><strong>House Number:</strong> 1234</p>
+                <h2>Welcome,Kian!</h2>
+                <img src="SupportImages/" alt="Resident Photo" onerror="this.src='default-avatar.png';" class="profile-photo">
+                <p><strong>Name:</strong> Kian Mwiberi</p>
+                <p><strong>House Number:</strong> B2</p>
                 <p><strong>Contact:</strong> +254 712-345-678</p>
-                <p><strong>Email:</strong> resident1@example.com</p>
-                <p><strong>Member Since:</strong> January 2023</p>
+                <p><strong>Email:</strong>mwiberikian3@gmail.com</p>
+                <p><strong>Member Since:</strong> November 2024</p>
                 <div class="profile-actions">
                     <button onclick="editProfile()">Edit Profile</button>
                     <button onclick="viewDocuments()">View Documents</button>
@@ -402,7 +402,7 @@ $conn->close();
             labels: ['January', 'February', 'March', 'April', 'May'], // Replace with actual data
             datasets: [{
                 label: 'Rental Payments',
-                data: [500, 700, 800, 600, 900], // Replace with actual data
+                data: [32000, 32000, 32000, 32000, ], // Replace with actual data
                 backgroundColor: 'rgba(75, 192, 192, 0.5)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
