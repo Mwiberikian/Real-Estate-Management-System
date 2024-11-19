@@ -221,7 +221,9 @@ $messagesResult = $messagesStmt->get_result();
         }
 
         body {
-            background-color: #f4f4f4;
+            background: url('path_to_your_background_image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            backdrop-filter: blur(5px);
             color: #333;
             font-size: 16px;
             line-height: 1.6;
@@ -231,13 +233,12 @@ $messagesResult = $messagesStmt->get_result();
             height: 100px;
             width: 130px;
             display: block;
-            margin-left: 5px ;
-
+            margin-left: 5px;
         }
 
         header {
             text-align: center;
-            background-color: #4CAF50;
+            background-color: rgba(0, 77, 0, 0.8);
             color: white;
             padding: 5px;
         }
@@ -250,7 +251,7 @@ $messagesResult = $messagesStmt->get_result();
         nav ul {
             list-style-type: none;
             text-align: center;
-            background-color: #333;
+            background-color: rgba(51, 51, 51, 0.8);
             padding: 15px 0;
         }
 
@@ -275,7 +276,7 @@ $messagesResult = $messagesStmt->get_result();
         .form-section {
             display: none;
             padding: 20px;
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.8);
             margin: 20px auto;
             max-width: 800px;
             border-radius: 8px;
@@ -324,7 +325,7 @@ $messagesResult = $messagesStmt->get_result();
             padding: 15px;
             margin: 10px;
             width: 250px;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
@@ -352,9 +353,73 @@ $messagesResult = $messagesStmt->get_result();
         .active {
             display: block !important;
         }
+
+         /* General table styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 16px;
+        text-align: left;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #4CAF50;
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    td a {
+        color: #007BFF;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    td a:hover {
+        text-decoration: underline;
+    }
+
+    td .btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    td .btn:hover {
+        opacity: 0.9;
+    }
+
+    td .btn-update {
+        background-color: #28a745;
+    }
+
+    td .btn-delete {
+        background-color: #dc3545;
+    
     </style>
 </head>
 <body>
+
 <div class="logo">
     <img src="landingpageimages/image-removebg-preview.png" alt="logo" width="160" height="130">
 </div>
