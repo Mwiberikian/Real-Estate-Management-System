@@ -254,7 +254,7 @@ $conn->close();
 
             <div id="profile-section" class="profile-section">
                 <h2>Welcome,Kian!</h2>
-                <img src="SupportImages/" alt="Resident Photo" onerror="this.src='default-avatar.png';" class="profile-photo">
+                <img src="SupportImages/kian.jpg" alt="Kian's Photo" onerror="this.src='default-avatar.png';" class="profile-photo">
                 <p><strong>Name:</strong> Kian Mwiberi</p>
                 <p><strong>House Number:</strong> B2</p>
                 <p><strong>Contact:</strong> +254 712-345-678</p>
