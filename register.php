@@ -28,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "INSERT INTO PropertyOwners (firstname, lastname, email, password, phonenumber) 
                 VALUES (?, ?, ?, ?, ?)";
     } elseif ($role === 'Resident') {
-        $sql = "INSERT INTO Tenants (firstname, lastname, email, password, phonenumber) 
-                VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO Tenants (firstname, lastname, email, password, phonenumber,property_id) 
+                VALUES (?, ?, ?, ?, ?, ?)";
     } elseif ($role === 'Helpline') {
         $sql = "INSERT INTO helpline (firstname, lastname, email, password, phonenumber) 
                 VALUES (?, ?, ?, ?, ?)";
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("sssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber);
     }
     } elseif($role === 'Resident') {
-        $stmt->bind_param("sssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber);
+        $stmt->bind_param("ssssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber, $property_id);
     }
 
     // Execute the statement

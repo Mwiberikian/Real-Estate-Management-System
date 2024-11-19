@@ -1,9 +1,9 @@
 <?php
 // Database connection
-$host = 'localhost';
+$host = 'localhost:3307';
 $db = 'software';
 $user = 'root';
-$pass = ''; // Update password
+$pass = 'oliviamumbi2010'; // Update password
 $conn = new mysqli($host, $user, $pass, $db);
 
 // Check connection
