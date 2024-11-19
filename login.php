@@ -40,7 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['tenant_id'] = $user['id']; // tenant_id is stored in the 'id' field
                     header('Location: resident_homepage.php'); // Redirect to the resident homepage
                 } elseif ($user['role'] === 'PropertyOwner') {
-                    header('Location: ownerdashboard.php'); // Redirect to the owner dashboard
+                    // Set session variable for property owner
+                    $_SESSION['owner_id'] = $user['id'];
+                    // Redirect to the owner's dashboard
+                    header('Location: ownerdashboard.php?owner_id=' . $_SESSION['owner_id']);
+                    exit;
                 } elseif ($user['role'] === 'Helpline') {
                     header('Location: support.php'); // Redirect to the helpline page
                 }
