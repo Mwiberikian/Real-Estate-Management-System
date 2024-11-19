@@ -4,10 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helpline Tickets - Rosewood Parks</title>
-    <link rel="stylesheet" href="support-style.css">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: beige;
+            color: black;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #A58754;
+            color: beige;
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin: 0;
+        }
+
+        /* Main Content Styling */
+        main {
+            margin-top: 20px;
+        }
+
+        main h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: white;
+            color: #000;
+            padding: 10px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #A58754;
+            color: white;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: blanchedalmond;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+            color: #555;
+            border-top: 1px solid #cfd8dc;
+        }
+
+        footer p {
+            margin: 5px 0;
+            color: #004d40;
+        }
+    </style>
     <script>
         function toggleCheckboxes(rowId, selectedId) {
-            const checkboxes = document.querySelectorAll(`.status-checkbox-${rowId}`);
+            const checkboxes = document.querySelectorAll(.status-checkbox-${rowId});
             checkboxes.forEach(checkbox => {
                 if (checkbox.id !== selectedId) {
                     checkbox.checked = false;
@@ -28,8 +124,6 @@
         <table>
             <thead>
                 <tr>
-                    <th>Request ID</th>
-                    <th>Tenant ID</th>
                     <th>Property ID</th>
                     <th>Details</th>
                     <th>Image</th>
@@ -40,10 +134,10 @@
             <tbody>
                 <?php
                 // Database connection
-                $host = 'localhost';
+                $host = 'localhost:3307';
                 $db = 'software';
                 $user = 'root';
-                $pass = ''; // Update password
+                $pass = 'oliviamumbi2010'; // Update password
                 $conn = new mysqli($host, $user, $pass, $db);
 
                 if ($conn->connect_error) {
@@ -62,13 +156,12 @@
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $rowId = $row['id'];
-                        $imageTag = $row['image_path'] ? "<img src='{$row['image_path']}' alt='Problem Image' width='20' height='20'>" : 'No Image';
+                        $imageTag = $row['image_path'] ? "<img src='{$row['image_path']}' alt='Problem Image' width='50' height='50'>" : 'No Image';
                         echo "<tr>
-                                <td>{$rowId}</td>
-                                <td>{$row['resident_id']}</td>
-                                <td>{$row['property_number']}</td>
-                                <td>" . htmlspecialchars($row['description']) . "</td>
+                                <td>{$row['property_id']}</td>
+                                <td>{$row['description']}</td>
                                 <td>{$imageTag}</td>
+                                <td>" . htmlspecialchars($row['status']) . "</td>
                                 <td>
                                     <form method='POST' action=''>
                                         <input type='hidden' name='ticket_id' value='{$rowId}'>
@@ -97,6 +190,9 @@
         </table>
     </main>
 
+    <footer>
+        <p>&copy; 2024 Rosewood Parks. All Rights Reserved.</p>
+    </footer>
 </div>
 
 </body>
