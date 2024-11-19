@@ -4,7 +4,7 @@ include 'db_connect.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize inputs
     $firstname = htmlspecialchars(trim($_POST['firstName']));
     $lastname = htmlspecialchars(trim($_POST['lastName']));
@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $confirmPassword = $_POST['confirmPassword'];
     $phonenumber = htmlspecialchars(trim($_POST['phone']));
     $role = htmlspecialchars(trim($_POST['role']));
+    $property_id = isset($_POST['property_id']) ? htmlspecialchars(trim($_POST['property_id'])) : null;
 
     // Check if passwords match
     if ($password !== $confirmPassword) {
@@ -28,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "INSERT INTO PropertyOwners (firstname, lastname, email, password, phonenumber) 
                 VALUES (?, ?, ?, ?, ?)";
     } elseif ($role === 'Resident') {
-        $sql = "INSERT INTO Tenants (firstname, lastname, email, password, phonenumber,property_id) 
+        $sql = "INSERT INTO Tenants (firstname, lastname, email, password, phonenumber, property_id) 
                 VALUES (?, ?, ?, ?, ?, ?)";
     } elseif ($role === 'Helpline') {
         $sql = "INSERT INTO helpline (firstname, lastname, email, password, phonenumber) 
@@ -43,25 +44,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($role === 'PropertyOwner') {
         $stmt->bind_param("sssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber);
-    }
-    elseif ($role === 'Helpline') {
+    } elseif ($role === 'Helpline') {
         $stmt->bind_param("sssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber);
-    }
-    } elseif($role === 'Resident') {
+    } elseif ($role === 'Resident') {
+        if ($property_id === null) {
+            echo "Property ID is required for Residents.";
+            exit();
+        }
         $stmt->bind_param("ssssss", $firstname, $lastname, $email, $hashedPassword, $phonenumber, $property_id);
     }
 
     // Execute the statement
     if ($stmt->execute()) {
-        // Redirect on success
         header("Location: login.html");
         exit();
     } else {
-        // Handle execution errors
         echo "Registration failed: " . $stmt->error;
     }
 
     // Close the statement and connection
     $stmt->close();
     $conn->close();
+}
 ?>
